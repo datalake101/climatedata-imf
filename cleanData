@@ -23,11 +23,26 @@ df = import('https://raw.githubusercontent.com/datalake101/climatedata-imf/main/
 df %>% mutate(meanCol = rowMeans(.[, c(56,57)], na.rm = T))
 
 
+df %>%
+    pivot_longer(
+        cols = all_of(4:57 ),
+        names_to = c("year", "quarter"),
+        names_pattern = "(\\d+)(Q\\d)",
+        values_to = "value"
+    )
+
 
 df %>%
-  pivot_longer(
-    cols = contains('Q'), 
-    names_to = c("year", "quarter"),
-    names_pattern = "(\\d+)(Q\\d)",
-    values_to = "value"
-  )
+  mutate(year = as.character(year)) %>%
+  group_by(year, Industry, Country, gasType) %>%
+  summarise(mean = mean(value)) %>%
+  ggplot(aes(x = year, y = mean, color = Industry, group = interaction(Industry))) +
+  geom_line() +
+  facet_grid(rows = vars(Country), cols = vars(gasType)) +
+  labs(x = "Year", y = "Mean Value", color = "") +
+  theme_minimal() +
+  theme(legend.direction = "horizontal", legend.position = "bottom",
+        legend.title = element_blank(), legend.box.spacing = unit(0.2, "cm"),
+        legend.spacing = unit(0.2, "cm"))
+
+
