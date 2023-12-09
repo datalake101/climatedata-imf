@@ -21,3 +21,13 @@ df = import('https://raw.githubusercontent.com/datalake101/climatedata-imf/main/
   )
 
 df %>% mutate(meanCol = rowMeans(.[, c(56,57)], na.rm = T))
+
+
+
+df %>%
+  pivot_longer(
+    cols = contains('Q'), 
+    names_to = c("year", "quarter"),
+    names_pattern = "(\\d+)(Q\\d)",
+    values_to = "value"
+  )
