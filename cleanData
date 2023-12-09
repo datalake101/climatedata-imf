@@ -1,10 +1,9 @@
 
 df = import('https://raw.githubusercontent.com/datalake101/climatedata-imf/main/climateChangeIMF.csv')
-df = df [,c(1, 10, 11, 14:67)]
 
 
- df = df %>%
-  group_by(Country, Industry, `Gas Type`) %>%
+ df %>%
+  rowwise() %>%
   mutate(
     mean2010 = mean(c(.data$`2010Q1`, .data$`2010Q2`, .data$`2010Q3`, .data$`2010Q4`), na.rm = T),
     mean2011 = mean(c(.data$`2011Q1`, .data$`2011Q2`, .data$`2011Q3`, .data$`2011Q4`), na.rm = T),
@@ -20,3 +19,5 @@ df = df [,c(1, 10, 11, 14:67)]
     mean2021 = mean(c(.data$`2021Q1`, .data$`2021Q2`, .data$`2021Q3`, .data$`2021Q4`), na.rm = T),
     mean2022 = mean(c(.data$`2022Q1`, .data$`2022Q2`, .data$`2022Q3`, .data$`2022Q4`), na.rm = T)
   )
+
+df %>% mutate(meanCol = rowMeans(.[, c(56,57)], na.rm = T))
